@@ -17,6 +17,9 @@ SA['postseason']=  SA.postseason.apply(lambda x :1 if x == 'Y' else '0')
 # Y => 1, character(0) => 0
 SA['neutralgame']=  SA.neutralgame.apply(lambda x :1 if x == 'Y' else '0')  # Y => 1, character(0) => 0
 
+# convert duration to minutes
+SA['duration'] = SA['duration'].apply(lambda x: int(x[0]) * 60 + int(x[-2:]))
+
 plt.scatter(SA['neutralgame'], SA['attend'])
 plt.show()
 
