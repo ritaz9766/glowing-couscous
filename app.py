@@ -21,7 +21,7 @@ app.layout = html.Div([
     html.H1("data report for football games"),
     html.Br(),
     #first graph is just viewers aganist attend
-    html.H1("overview"),
+    html.H2("overview"),
     dcc.Graph(figure=fig2),
     html.Br(),
     html.Br(),
