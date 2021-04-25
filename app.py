@@ -9,68 +9,73 @@ import numpy as np
 import pandas as pd
 
 df = pd.read_csv("dataframe.csv")
+# drop NA
 df.dropna(subset = ["VIEWERS"], inplace=True)
-fig2= px.scatter(df,x= "VIEWERS",y="attend",hover_name="TeamIDsDate")
-
-
+# drop outlier
+df = df[df.TeamIDsDate!='UA@MIZZU10-13-2012']
 
 
 app = dash.Dash(__name__)
 
 app.layout = html.Div([
-    html.H1("data report for football games"),
+    html.H1("Data report for football games"),
     html.Br(),
-    #first graph is just viewers aganist attend
-    html.H2("overview"),
-    dcc.Graph(figure=fig2),
+    # graph1: dropdown options -> viewers vs. attend
+    html.Div(
+        dcc.Dropdown(
+            id='dropdown',
+            options=[ 
+                {'label': "If rain", 'value': "weatherb"},
+                {'label': "Tempurature", 'value': "temp"},
+                {'label': "Stadium", 'value': "stadium"},
+                {'label': "Home Team", 'value': "Home Team"},
+                {'label': "Visitor Team", 'value': "Visitor Team"}
+                ],
+            value = "weatherb"
+        ),
+        style={'width': '50%'}
+    ),
+    dcc.Graph(id='graph1'),
     html.Br(),
     html.Br(),
-    html.Br(),
-    #second graph would be colunms agaist people who watched the game ON tv
-    html.H3("TV viewers"),
-    dcc.Dropdown(
-        id = 'color1',
-        options =[ 
-            {'label': "game rating", 'value': "RATING"},
-            {'label': "Home Team", 'value': "Home Team"},
-            {'label': "Visit Team", 'value': "VisTeamID"},
+    html.Br(),  
+    # graph2: radio options -> viewers vs. rating
+    dcc.RadioItems(
+        id='radio',
+        options=[ 
             {'label': "Network", 'value': "Network"},
-            {'label': "Score Home", 'value': "score_home"},
-            ],
-        value = "RATING",
-        placeholder = "color by"
-    ),
-    dcc.Graph(id = 'outputgraph1',figure={}),
-    html.Br(),
-    html.Br(),
-    html.Br(),
-    html.H3("attendees"),
-    dcc.Dropdown(
-        id = 'graph2',
-        options =[ 
-            {'label': "game rating", 'value': "RATING"},
             {'label': "Home Team", 'value': "Home Team"},
-            {'label': "Visit Team", 'value': "VisTeamID"},
-            {'label': "If rain", 'value': "weatherb"},
-            {'label': "Stadium", 'value': "stadium"},
-            {'label': "Tempurature", 'value': "temp"}
+            {'label': "Visitor Team", 'value': "Visitor Team"}
             ],
-        value = "RATING",
-        placeholder = "aganist"
+        value = "Network"
     ),
-    dcc.Graph(id = 'outputgraph2',figure={}),
+    dcc.Graph(id='graph2',figure={}),
+    html.Br(),
+    html.Br(),
+    html.Br()
 ])
 
+
 @app.callback(
-    Output(component_id = 'outputgraph1',component_property='figure'),
-    Output(component_id = 'outputgraph2',component_property='figure'),
-    [Input(component_id='color1',component_property='value'),
-    Input(component_id='graph2',component_property='value')]
+    Output(component_id='graph1', component_property='figure'),
+    [Input(component_id='dropdown', component_property='value')]
 )
-def updategraph(color1value,yax):
-    fig = px.scatter(df,x="VIEWERS",y="RATING",color=color1value,hover_name="TeamIDsDate")
-    fig2 = px.scatter(df,x="attend",y=yax,color="RATING",hover_name="TeamIDsDate")
-    return fig,fig2
+def update_graph1(dropdownValue):
+    fig = px.scatter(df, x="VIEWERS", y="attend", 
+                     color=dropdownValue, hover_name="TeamIDsDate")
+    
+    return fig
+
+
+@app.callback(
+    Output(component_id = 'graph2',component_property='figure'),
+    [Input(component_id='radio',component_property='value')]
+)
+def update_graph2(radioValue):
+    fig = px.scatter(df, x="VIEWERS", y="RATING", 
+                     color=radioValue, hover_name="TeamIDsDate")
+
+    return fig
 
 
 if __name__ =='__main__':
