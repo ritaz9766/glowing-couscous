@@ -53,5 +53,5 @@ df['attend'].describe()
 df1 = pd.read_csv("TV_Ratings_onesheet.csv")
 df2 = pd.merge(df, df1, on="TeamIDsDate")
 
-df2.to_csv("dataframe.csv")
+df2.to_csv("dataframe.csv", index=False)
 
