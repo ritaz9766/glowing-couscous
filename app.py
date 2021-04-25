@@ -10,7 +10,7 @@ import pandas as pd
 
 df = pd.read_csv("dataframe.csv")
 df.dropna(subset = ["VIEWERS"], inplace=True)
-fig2= px.scatter(df,x= "VIEWERS",y="attend")
+fig2= px.scatter(df,x= "VIEWERS",y="attend",hover_name="TeamIDsDate")
 
 
 
@@ -68,7 +68,7 @@ app.layout = html.Div([
     Input(component_id='graph2',component_property='value')]
 )
 def updategraph(color1value,yax):
-    fig = px.scatter(df,x="VIEWERS",y="RATING",color=color1value)
+    fig = px.scatter(df,x="VIEWERS",y="RATING",color=color1value,hover_name="TeamIDsDate")
     fig2 = px.scatter(df,x="attend",y=yax,color="RATING",hover_name="TeamIDsDate")
     return fig,fig2
 
