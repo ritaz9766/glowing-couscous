@@ -61,6 +61,11 @@ app.layout = html.Div([
             options=graph1_dropdownDict,
             value = "If rain", 
             style={'width': '50%'})]),
+    dcc.RadioItems(
+            id='graph1_x',
+            options=[{'label': 'Linear', 'value': 'ols'},
+                     {'label': 'Non-linear', 'value': 'lowess'}],
+            value = "lowess"),
     dcc.Graph(id='graph1'),
     html.Br(),
     html.Br(),
@@ -122,11 +127,12 @@ app.layout = html.Div([
 # graph1
 @app.callback(
     Output(component_id='graph1', component_property='figure'),
-    [Input(component_id='graph1_color', component_property='value')]
+    [Input(component_id='graph1_color', component_property='value'),
+    Input(component_id='graph1_x', component_property='value')]
 )
-def update_graph1(color):
+def update_graph1(color,trendline):
     fig = px.scatter(df, x="TV viewers", y="Attendees", 
-                     color=color, hover_name="TeamIDsDate")
+                     color=color, hover_name="TeamIDsDate",trendline = trendline)
     
     return fig
 
